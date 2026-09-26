@@ -210,7 +210,7 @@
       steps,
       service: goals.length === 1
         ? `Ruta sugerida: ${serviceLabels[goals[0]]}`
-        : `Ruta combinada: ${joinSpanish(goals.map((goal) => serviceLabels[goal]))}`,
+        : `Ruta combinada: ${goals.map((goal) => serviceLabels[goal]).join(" + ")}`,
       labels: {
         actor: labels.actor[actor],
         goals: goalText,
