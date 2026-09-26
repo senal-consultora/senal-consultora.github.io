@@ -5,79 +5,7 @@ const state = {
   challenges: [],
 };
 
-const labels = {
-  actor: {
-    dirigente: "dirigente o candidato",
-    gobierno: "equipo de gobierno",
-    institucion: "institución",
-    ong: "ONG",
-    organizacion: "organización",
-  },
-  goals: {
-    posicionamiento: "ordenar el posicionamiento",
-    conversacion: "entender la conversación",
-    comunicacion: "fortalecer la comunicación",
-    riesgos: "anticipar riesgos",
-    innovacion: "incorporar IA y herramientas",
-  },
-};
-
-const actorContext = {
-  dirigente: "Liderazgo, atributos públicos y coherencia entre voz, agenda y territorio",
-  gobierno: "Gestión, claridad de prioridades y capacidad de respuesta frente a la agenda pública",
-  institucion: "Legitimidad, consistencia institucional y relación con públicos diversos",
-  ong: "Visibilidad de la causa, construcción de comunidad e incidencia pública",
-  organizacion: "Reputación, propuesta de valor y vínculo sostenido con sus audiencias",
-};
-
-const priorityMap = {
-  mensaje: {
-    title: "Definir una arquitectura de mensajes",
-    copy: "Antes de aumentar la frecuencia, conviene ordenar una idea central, tres ejes y evidencias que sostengan cada intervención",
-    steps: ["Relevar qué atributos aparecen hoy", "Definir un mensaje central y tres ejes", "Alinear biografías, piezas y vocerías"],
-  },
-  interaccion: {
-    title: "Recuperar escucha y conversación",
-    copy: "La prioridad no es publicar más, sino comprender qué activa preguntas, acuerdos, objeciones y participación en cada público",
-    steps: ["Identificar preguntas y temas recurrentes", "Separar alcance de interacción significativa", "Diseñar formatos que habiliten respuesta"],
-  },
-  datos: {
-    title: "Instalar un sistema de lectura",
-    copy: "Para decidir con menos intuición hace falta convertir métricas aisladas en señales comparables, periódicas y vinculadas a objetivos",
-    steps: ["Elegir indicadores asociados a cada objetivo", "Crear una línea de base por canal", "Definir una instancia breve de lectura semanal"],
-  },
-  reactivo: {
-    title: "Pasar de la reacción a la agenda",
-    copy: "Responder al contexto es necesario, pero una estrategia sólida también construye temas propios y anticipa escenarios posibles",
-    steps: ["Distinguir agenda propia, pública y coyuntural", "Crear criterios para decidir cuándo intervenir", "Planificar escenarios y respuestas base"],
-  },
-  canales: {
-    title: "Ordenar el ecosistema digital",
-    copy: "Cada canal necesita un rol concreto. La consistencia surge cuando todos responden a una misma estrategia sin repetir exactamente lo mismo",
-    steps: ["Asignar una función a cada canal activo", "Unificar identidad, biografías y enlaces", "Adaptar formatos sin fragmentar el mensaje"],
-  },
-  equipo: {
-    title: "Diseñar una operación sostenible",
-    copy: "La estrategia necesita un ritmo que el equipo pueda sostener, con responsabilidades claras, plantillas y automatización selectiva",
-    steps: ["Priorizar tareas de mayor impacto", "Definir responsables y circuitos de aprobación", "Automatizar tareas repetitivas con control humano"],
-  },
-};
-
-const goalLens = {
-  posicionamiento: "Conviene comenzar por la coherencia entre los atributos que se quieren proyectar y las señales que hoy aparecen públicamente",
-  conversacion: "La lectura debe enfocarse en temas, preguntas y cambios de tono, no sólo en volumen o cantidad de menciones",
-  comunicacion: "La mejora depende de conectar objetivos, públicos, mensajes y formatos dentro de un mismo criterio editorial",
-  riesgos: "Hace falta observar señales tempranas y acordar criterios de respuesta antes de que la coyuntura imponga el ritmo",
-  innovacion: "La tecnología aporta cuando resuelve un proceso concreto y conserva criterio estratégico y supervisión humana",
-};
-
-const serviceMap = {
-  posicionamiento: "Diagnóstico político digital + estrategia de posicionamiento",
-  conversacion: "Inteligencia digital y escucha estratégica",
-  comunicacion: "Diagnóstico político digital + estrategia de comunicación",
-  riesgos: "Inteligencia digital y monitoreo de señales",
-  innovacion: "Diagnóstico de procesos + evolución con IA",
-};
+const diagnosticEngine = window.SenalDiagnostic;
 
 const form = document.querySelector("#diagnostic-form");
 const resultView = document.querySelector("#result-view");
@@ -161,28 +89,30 @@ nextButton.addEventListener("click", () => {
 backButton.addEventListener("click", () => showStep(Math.max(1, state.step - 1)));
 
 function buildResult() {
-  const actor = state.actor[0];
-  const goal = state.goals[0];
-  const challenge = state.challenges[0];
-  const priority = priorityMap[challenge];
-  const secondarySteps = state.challenges.slice(1).map((item) => priorityMap[item].steps[0]);
-  const steps = [...priority.steps, ...secondarySteps].slice(0, 4);
+  const diagnosis = diagnosticEngine.diagnose({
+    actor: state.actor[0],
+    goals: state.goals,
+    challenges: state.challenges,
+  });
 
-  document.querySelector("#result-title").textContent = "Primero claridad, después escala";
-  document.querySelector("#result-lead").textContent = goalLens[goal];
-  document.querySelector("#result-context").textContent = `${labels.actor[actor]} · ${actorContext[actor]}`;
-  document.querySelector("#result-priority").textContent = priority.title;
-  document.querySelector("#result-priority-copy").textContent = priority.copy;
-  document.querySelector("#result-service").textContent = serviceMap[goal];
+  document.querySelector("#result-title").textContent = diagnosis.title;
+  document.querySelector("#result-lead").textContent = diagnosis.lead;
+  document.querySelector("#result-context").textContent = diagnosis.context;
+  document.querySelector("#result-rationale").textContent = diagnosis.rationale;
+  document.querySelector("#result-priority").textContent = diagnosis.primary.title;
+  document.querySelector("#result-priority-copy").textContent = diagnosis.primary.copy;
+  document.querySelector("#result-secondary").textContent = diagnosis.secondary.title;
+  document.querySelector("#result-secondary-copy").textContent = diagnosis.secondary.copy;
+  document.querySelector("#result-service").textContent = diagnosis.service;
 
   const stepList = document.querySelector("#result-steps");
-  stepList.replaceChildren(...steps.map((text) => {
+  stepList.replaceChildren(...diagnosis.steps.map((text) => {
     const item = document.createElement("li");
     item.textContent = text;
     return item;
   }));
 
-  const summary = makeSummary(actor, goal, priority, steps);
+  const summary = makeSummary(diagnosis);
   document.querySelector("#contact-summary").value = summary;
 
   form.hidden = true;
@@ -192,16 +122,19 @@ function buildResult() {
   resultView.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-function makeSummary(actor, goal, priority, steps) {
+function makeSummary(diagnosis) {
   return [
     "ORIENTACIÓN PRELIMINAR · SEÑAL",
-    `Actor: ${labels.actor[actor]}`,
-    `Objetivo principal: ${labels.goals[goal]}`,
-    `Prioridad estratégica: ${priority.title}`,
-    priority.copy,
+    `Actor: ${diagnosis.labels.actor}`,
+    `Objetivos: ${diagnosis.labels.goals.join(" · ")}`,
+    `Desafíos: ${diagnosis.labels.challenges.join(" · ")}`,
+    `Prioridad estratégica: ${diagnosis.primary.title}`,
+    diagnosis.primary.copy,
+    `Segundo foco: ${diagnosis.secondary.title}`,
+    diagnosis.secondary.copy,
     "Próximos pasos:",
-    ...steps.map((item, index) => `${index + 1}. ${item}`),
-    `Servicio sugerido: ${serviceMap[goal]}`,
+    ...diagnosis.steps.map((item, index) => `${index + 1}. ${item}`),
+    `Servicio sugerido: ${diagnosis.service}`,
   ].join("\n");
 }
 
