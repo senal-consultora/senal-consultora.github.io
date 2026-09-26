@@ -238,11 +238,61 @@
               Esta orientación no promete resultados electorales ni reemplaza un diagnóstico integral. Se basa únicamente en las respuestas seleccionadas
             </p>
 
+            <form
+              class="contact-form"
+              id="contact-form"
+              action="https://formsubmit.co/senalconsultora@gmail.com"
+              method="POST"
+            >
+              <input type="hidden" name="_subject" value="Nueva solicitud de diagnóstico · SEÑAL" />
+              <input type="hidden" name="_template" value="table" />
+              <input type="hidden" name="_next" value="https://senal-consultora.github.io/?enviado=1#diagnostico" />
+              <input type="hidden" name="_captcha" value="false" />
+              <input type="hidden" name="Orientación preliminar" id="contact-summary" />
+              <input class="contact-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" />
+
+              <div class="contact-heading">
+                <p>Próximo paso</p>
+                <h4>¿Querés avanzar con un diagnóstico integral?</h4>
+                <span>Dejanos tus datos y te contactaremos para coordinar una primera conversación</span>
+              </div>
+
+              <div class="contact-fields">
+                <label>
+                  <span>Nombre y apellido</span>
+                  <input type="text" name="Nombre" autocomplete="name" required />
+                </label>
+                <label>
+                  <span>Correo electrónico</span>
+                  <input type="email" name="email" autocomplete="email" required />
+                </label>
+                <label>
+                  <span>Organización o espacio</span>
+                  <input type="text" name="Organización" autocomplete="organization" />
+                </label>
+                <label class="contact-message">
+                  <span>¿Qué necesitás trabajar?</span>
+                  <textarea name="Consulta" rows="3"></textarea>
+                </label>
+              </div>
+
+              <p class="contact-privacy">Usaremos estos datos únicamente para responder esta consulta</p>
+              <button class="button button-primary contact-submit" type="submit">
+                Enviar solicitud <span aria-hidden="true">→</span>
+              </button>
+            </form>
+
             <div class="result-actions">
-              <a class="button button-primary" id="contact-link" href="mailto:hola@senalconsultora.com">Coordinar un diagnóstico <span aria-hidden="true">↗</span></a>
               <button class="button button-ghost" type="button" id="copy-result">Copiar orientación</button>
               <button class="text-button" type="button" id="restart-button">Empezar de nuevo</button>
             </div>
+          </div>
+
+          <div class="submission-success" id="submission-success" hidden>
+            <div class="result-kicker"><span></span> Solicitud enviada</div>
+            <h3 tabindex="-1">Recibimos tu consulta</h3>
+            <p>Gracias por contactar a SEÑAL. Te responderemos al correo que indicaste para coordinar los próximos pasos</p>
+            <button class="button button-primary" type="button" id="restart-from-success">Hacer otro diagnóstico</button>
           </div>
         </div>
       </section>
