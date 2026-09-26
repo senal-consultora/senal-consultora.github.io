@@ -17,6 +17,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <script src="diagnostic-engine.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
@@ -218,10 +219,21 @@
               <strong id="result-context"></strong>
             </div>
 
+            <div class="result-rationale">
+              <span>Señales consideradas</span>
+              <p id="result-rationale"></p>
+            </div>
+
             <div class="result-block">
               <p>Prioridad estratégica</p>
               <h4 id="result-priority"></h4>
               <p id="result-priority-copy"></p>
+            </div>
+
+            <div class="result-block result-secondary">
+              <p>Segundo foco</p>
+              <h4 id="result-secondary"></h4>
+              <p id="result-secondary-copy"></p>
             </div>
 
             <div class="result-block steps-block">
