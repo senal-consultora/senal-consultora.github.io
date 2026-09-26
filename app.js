@@ -81,8 +81,6 @@ const serviceMap = {
 
 const form = document.querySelector("#diagnostic-form");
 const resultView = document.querySelector("#result-view");
-const submissionSuccess = document.querySelector("#submission-success");
-const diagnosticCard = document.querySelector(".diagnostic-card");
 const nextButton = document.querySelector("#next-button");
 const backButton = document.querySelector("#back-button");
 const status = document.querySelector("#form-status");
@@ -183,7 +181,8 @@ function buildResult() {
   }));
 
   const summary = makeSummary(actor, goal, priority, steps);
-  document.querySelector("#contact-summary").value = summary;
+  const contactLink = document.querySelector("#contact-link");
+  contactLink.href = `mailto:hola@senalconsultora.com?subject=${encodeURIComponent("Diagnóstico preliminar SEÑAL")}&body=${encodeURIComponent(summary + "\n\nQuisiera coordinar un diagnóstico integral.")}`;
 
   form.hidden = true;
   resultView.hidden = false;
@@ -217,17 +216,6 @@ document.querySelector("#copy-result").addEventListener("click", async (event) =
 });
 
 document.querySelector("#restart-button").addEventListener("click", () => {
-  resetDiagnostic();
-});
-
-document.querySelector("#restart-from-success").addEventListener("click", () => {
-  submissionSuccess.hidden = true;
-  diagnosticCard.classList.remove("sent");
-  resetDiagnostic();
-});
-
-function resetDiagnostic() {
-  document.querySelector("#contact-form").reset();
   state.step = 1;
   state.actor = [];
   state.goals = [];
@@ -239,25 +227,10 @@ function resetDiagnostic() {
   resultView.hidden = true;
   form.hidden = false;
   showStep(1);
-  document.querySelector("#diagnostic-title").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function showSubmissionSuccess() {
-  form.hidden = true;
-  resultView.hidden = true;
-  submissionSuccess.hidden = false;
-  diagnosticCard.classList.add("sent");
-  submissionSuccess.querySelector("h3").focus({ preventScroll: true });
-  submissionSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  history.replaceState({}, "", `${location.pathname}#diagnostico`);
-}
+});
 
 document.querySelectorAll(".option").forEach((button) => button.setAttribute("aria-pressed", "false"));
 updateControls();
-
-if (new URLSearchParams(location.search).get("enviado") === "1") {
-  showSubmissionSuccess();
-}
 
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
